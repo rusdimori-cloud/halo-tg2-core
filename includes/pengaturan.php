@@ -264,3 +264,34 @@ function halo_tg2_core_reset_preferences() {
 	wp_safe_redirect(halo_tg2_core_pengaturan_url(array('preferensi' => 'diatur-ulang')));
 	exit;
 }
+
+add_action('admin_post_halo_tg2_save_exam', 'halo_tg2_core_save_exam');
+/**
+ * Simpan pengingat ujian — meta halo_tg2_exam_date (Y-m-d) dan
+ * halo_tg2_exam_name milik pengguna sendiri. Tanggal kosong berarti
+ * pengingat dihapus. Banner hitung mundur di Dashboard membaca meta ini.
+ */
+function halo_tg2_core_save_exam() {
+	if (!is_user_logged_in() || !isset($_POST['_htexnonce']) || !wp_verify_nonce(sanitize_key(wp_unslash($_POST['_htexnonce'])), 'halo_tg2_save_exam')) {
+		wp_safe_redirect(halo_tg2_core_pengaturan_url(array('ujian' => 'gagal')));
+		exit;
+	}
+	$uid  = get_current_user_id();
+	$name = isset($_POST['exam_name']) ? sanitize_text_field(wp_unslash($_POST['exam_name'])) : '';
+	$date = isset($_POST['exam_date']) ? sanitize_text_field(wp_unslash($_POST['exam_date'])) : '';
+	if ('' === $date) {
+		delete_user_meta($uid, 'halo_tg2_exam_date');
+		delete_user_meta($uid, 'halo_tg2_exam_name');
+		wp_safe_redirect(halo_tg2_core_pengaturan_url(array('ujian' => 'dihapus')));
+		exit;
+	}
+	$dt = DateTime::createFromFormat('Y-m-d', $date);
+	if (!$dt || $dt->format('Y-m-d') !== $date) {
+		wp_safe_redirect(halo_tg2_core_pengaturan_url(array('ujian' => 'gagal')));
+		exit;
+	}
+	update_user_meta($uid, 'halo_tg2_exam_date', $date);
+	update_user_meta($uid, 'halo_tg2_exam_name', $name);
+	wp_safe_redirect(halo_tg2_core_pengaturan_url(array('ujian' => 'tersimpan')));
+	exit;
+}
