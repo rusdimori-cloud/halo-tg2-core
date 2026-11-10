@@ -1,0 +1,36 @@
+/* halo-tg2-core — komponen dua tab Woo di dashboard Tutor (Fase 6).
+   Token warna mengikuti Halo TG2 Template Desain (tema pemiliknya). */
+.ht-core__orders{display:grid;gap:12px}
+.ht-core__order{
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  background:#fff;border:1px solid rgba(3,5,11,.10);border-radius:20px;
+  box-shadow:0 1px 2px rgba(10,11,13,.04),0 12px 32px rgba(10,11,13,.07);
+  padding:16px 20px;
+}
+.ht-core__order-main{flex:1;min-width:220px}
+.ht-core__order-name{font-weight:600;font-size:15px;color:#0A0B0D}
+.ht-core__order-meta{font-size:13px;color:#5B6B8C;margin-top:2px}
+.ht-core__chip{
+  font-size:12px;font-weight:600;border-radius:9999px;padding:5px 12px;
+}
+.ht-core__chip.is-paid{background:rgba(18,138,67,.12);color:#128A43}
+.ht-core__chip.is-pending{background:rgba(254,194,33,.25);color:#7A5A00}
+.ht-core__order-link{color:#1463FF;font-weight:600;font-size:14px}
+
+.ht-core__account-head{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.ht-core__avatar{
+  width:52px;height:52px;border-radius:9999px;flex:none;
+  background:#EEF4FF;color:#1463FF;font-weight:700;font-size:20px;
+  display:grid;place-items:center;
+}
+.ht-core__account-name{font-weight:600;font-size:16px;color:#0A0B0D}
+.ht-core__account-mail{font-size:13.6px;color:#5B6B8C}
+.ht-core__cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.ht-core__card{
+  display:grid;gap:4px;background:#fff;border:1px solid rgba(3,5,11,.10);
+  border-radius:20px;box-shadow:0 1px 2px rgba(10,11,13,.04),0 12px 32px rgba(10,11,13,.07);
+  padding:18px 20px;color:#0A0B0D;
+}
+.ht-core__card:hover{border-color:rgba(20,99,255,.45)}
+.ht-core__card-title{font-weight:600;font-size:15px}
+.ht-core__card-desc{font-size:13px;color:#5B6B8C}
