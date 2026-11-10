@@ -3,7 +3,7 @@
  * Plugin Name:       Halo TG2 Core
  * Plugin URI:        https://halo-tg2.com
  * Description:       Fungsi pendamping tema halo-tg2 (tema = tampilan, plugin = fungsi): satu pintu login, pengalihan akun Woo ke dashboard gabungan, tab Woo di dashboard Tutor, dan jaring pengaman enrollment.
- * Version:           1.2.3
+ * Version:           1.3.0
  * Author:            halo TG2
  * Text Domain:       halo-tg2-core
  *
@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
 	exit;
 }
 
-define('HALO_TG2_CORE_VERSION', '1.2.3');
+define('HALO_TG2_CORE_VERSION', '1.3.0');
 
 require_once plugin_dir_path(__FILE__) . 'includes/settings.php';
 require_once plugin_dir_path(__FILE__) . 'includes/redirects.php';
@@ -22,6 +22,7 @@ require_once plugin_dir_path(__FILE__) . 'includes/dashboard-merge.php';
 require_once plugin_dir_path(__FILE__) . 'includes/enrollment-guard.php';
 require_once plugin_dir_path(__FILE__) . 'includes/emails.php';
 require_once plugin_dir_path(__FILE__) . 'includes/contact.php';
+require_once plugin_dir_path(__FILE__) . 'includes/pengaturan.php';
 require_once plugin_dir_path(__FILE__) . 'includes/payment-methods.php';
 require_once plugin_dir_path(__FILE__) . 'includes/updater.php';
 

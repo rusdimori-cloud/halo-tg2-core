@@ -163,3 +163,53 @@ function halo_tg2_core_myaccount_redirect() {
 		exit;
 	}
 }
+
+add_action('template_redirect', 'halo_tg2_core_tutor_dashboard_redirect', 20);
+/**
+ * Satu dasbor (Fase 9): halaman dasbor Tutor untuk siswa dialihkan ke
+ * view panel padanannya, agar siswa tidak pernah melihat dua dasbor.
+ * Admin tidak dialihkan; pengunjung belum login dibiarkan (Tutor
+ * menampilkan gerbang masuknya sendiri).
+ */
+function halo_tg2_core_tutor_dashboard_redirect() {
+	if (!is_user_logged_in() || current_user_can('manage_options') || !is_page()) {
+		return;
+	}
+	global $post, $wp_query;
+	if (!$post) {
+		return;
+	}
+	$is_dash = false;
+	if (function_exists('tutor_utils') && method_exists(tutor_utils(), 'get_option')) {
+		$dash_id = (int) tutor_utils()->get_option('tutor_dashboard_page_id');
+		$is_dash = $dash_id > 0 && (int) $post->ID === $dash_id;
+	}
+	if (!$is_dash) {
+		$is_dash = has_shortcode((string) $post->post_content, 'tutor_dashboard');
+	}
+	if (!$is_dash) {
+		return;
+	}
+	$panel = halo_tg2_core_panel_url();
+	if ('' === $panel) {
+		return;
+	}
+	$page = '';
+	if (isset($wp_query->query_vars['tutor_dashboard_page'])) {
+		$page = (string) $wp_query->query_vars['tutor_dashboard_page'];
+	}
+	$map  = array(
+		'my-courses'       => 'kelas',
+		'enrolled-courses' => 'kelas',
+		'active-courses'   => 'kelas',
+		'completed-courses' => 'kelas',
+		'wishlist'         => 'kelas',
+		'purchase-history' => 'pesanan',
+		'settings'         => 'pengaturan',
+		'quiz-attempts'    => 'statistik',
+	);
+	$view   = isset($map[$page]) ? $map[$page] : 'beranda';
+	$target = 'beranda' === $view ? $panel : add_query_arg('tampilan', $view, $panel);
+	wp_safe_redirect($target);
+	exit;
+}
