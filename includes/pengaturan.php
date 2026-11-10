@@ -174,3 +174,93 @@ function halo_tg2_core_remove_photo() {
 	wp_safe_redirect(halo_tg2_core_pengaturan_url(array('foto' => 'dihapus')));
 	exit;
 }
+
+add_action('admin_post_halo_tg2_save_social', 'halo_tg2_core_save_social');
+/**
+ * Simpan akun sosial — padanan TUTOR\Student::tutor_social_profile
+ * (Tutor 4.1.3): setiap kunci dari tutor_user_social_icons() disimpan
+ * sebagai user meta; nilai kosong menghapus meta-nya.
+ */
+function halo_tg2_core_save_social() {
+	if (!is_user_logged_in() || !isset($_POST['_htsononce']) || !wp_verify_nonce(sanitize_key(wp_unslash($_POST['_htsononce'])), 'halo_tg2_save_social')) {
+		wp_safe_redirect(halo_tg2_core_pengaturan_url(array('sosial' => 'gagal')));
+		exit;
+	}
+	$keys = array('_tutor_profile_facebook', '_tutor_profile_twitter', '_tutor_profile_linkedin', '_tutor_profile_github', '_tutor_profile_website');
+	if (function_exists('tutor_utils') && method_exists(tutor_utils(), 'tutor_user_social_icons')) {
+		$icons = tutor_utils()->tutor_user_social_icons();
+		if (is_array($icons) && !empty($icons)) {
+			$keys = array_keys($icons);
+		}
+	}
+	$uid = get_current_user_id();
+	foreach ($keys as $key) {
+		$value = isset($_POST[$key]) ? sanitize_text_field(wp_unslash($_POST[$key])) : '';
+		if ('' !== $value) {
+			update_user_meta($uid, $key, $value);
+		} else {
+			delete_user_meta($uid, $key);
+		}
+	}
+	wp_safe_redirect(halo_tg2_core_pengaturan_url(array('sosial' => 'tersimpan')));
+	exit;
+}
+
+add_action('admin_post_halo_tg2_save_preferences', 'halo_tg2_core_save_preferences');
+/**
+ * Simpan preferensi belajar — nilai divalidasi ke daftar pilihan
+ * Tutor 4.1.3 (TUTOR\UserPreference), lalu disimpan lewat metode
+ * resmi Tutor bila kelasnya ada agar validasi & kaitannya utuh;
+ * tersimpan sebagai satu meta 'tutor_user_preferences'.
+ */
+function halo_tg2_core_save_preferences() {
+	if (!is_user_logged_in() || !isset($_POST['_htpnonce2']) || !wp_verify_nonce(sanitize_key(wp_unslash($_POST['_htpnonce2'])), 'halo_tg2_save_preferences')) {
+		wp_safe_redirect(halo_tg2_core_pengaturan_url(array('preferensi' => 'gagal')));
+		exit;
+	}
+	$pick = function ($field, $allowed, $fallback) {
+		$value = isset($_POST[$field]) ? sanitize_key(wp_unslash($_POST[$field])) : '';
+		return in_array($value, $allowed, true) ? $value : $fallback;
+	};
+	$scale = isset($_POST['font_scale']) ? absint(wp_unslash($_POST['font_scale'])) : 100;
+	if (!in_array($scale, array(60, 80, 100, 120, 140, 160, 180, 200), true)) {
+		$scale = 100;
+	}
+	$prefs = array(
+		'auto_play_next' => isset($_POST['auto_play_next']),
+		'theme'          => $pick('theme', array('light', 'dark', 'system'), 'system'),
+		'vision'         => $pick('vision', array('normal', 'protanopia', 'deuteranopia', 'deuteranomaly'), 'normal'),
+		'contrast'       => isset($_POST['contrast']) ? 'high' : '',
+		'motion_effects' => $pick('motion_effects', array('auto', 'reduce', 'standard'), 'auto'),
+		'font_scale'     => $scale,
+		'learning_mood'  => $pick('learning_mood', array('modern', 'kids'), 'modern'),
+	);
+	$uid = get_current_user_id();
+	if (class_exists('\TUTOR\UserPreference')) {
+		$engine = new \TUTOR\UserPreference();
+		$engine->save_preferences($prefs, $uid);
+	} else {
+		$current = get_user_meta($uid, 'tutor_user_preferences', true);
+		if (!is_array($current)) {
+			$current = array();
+		}
+		update_user_meta($uid, 'tutor_user_preferences', array_merge($current, $prefs));
+	}
+	wp_safe_redirect(halo_tg2_core_pengaturan_url(array('preferensi' => 'tersimpan')));
+	exit;
+}
+
+add_action('admin_post_halo_tg2_reset_preferences', 'halo_tg2_core_reset_preferences');
+/**
+ * Atur ulang preferensi ke bawaan — padanan reset Tutor: meta
+ * 'tutor_user_preferences' dihapus sehingga nilai bawaan berlaku lagi.
+ */
+function halo_tg2_core_reset_preferences() {
+	if (!is_user_logged_in() || !isset($_POST['_htrnonce2']) || !wp_verify_nonce(sanitize_key(wp_unslash($_POST['_htrnonce2'])), 'halo_tg2_reset_preferences')) {
+		wp_safe_redirect(halo_tg2_core_pengaturan_url(array('preferensi' => 'gagal')));
+		exit;
+	}
+	delete_user_meta(get_current_user_id(), 'tutor_user_preferences');
+	wp_safe_redirect(halo_tg2_core_pengaturan_url(array('preferensi' => 'diatur-ulang')));
+	exit;
+}
