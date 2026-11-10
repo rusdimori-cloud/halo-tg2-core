@@ -28,6 +28,11 @@ function halo_tg2_core_register_settings() {
 		'sanitize_callback' => 'sanitize_email',
 		'default'           => '',
 	));
+	register_setting('halo_tg2_core', 'halo_tg2_core_softnav', array(
+		'type'              => 'string',
+		'sanitize_callback' => 'halo_tg2_core_sanitize_softnav',
+		'default'           => '1',
+	));
 	add_settings_section(
 		'halo_tg2_core_main',
 		'Kontak resmi',
@@ -48,6 +53,47 @@ function halo_tg2_core_register_settings() {
 		'halo-tg2-core',
 		'halo_tg2_core_main'
 	);
+	add_settings_section(
+		'halo_tg2_core_nav',
+		'Navigasi',
+		'halo_tg2_core_nav_section_text',
+		'halo-tg2-core'
+	);
+	add_settings_field(
+		'halo_tg2_core_softnav',
+		'Navigasi lembut',
+		'halo_tg2_core_field_softnav',
+		'halo-tg2-core',
+		'halo_tg2_core_nav'
+	);
+}
+
+/**
+ * Sanitasi saklar navigasi lembut: hanya '1' atau '0'.
+ *
+ * @param mixed $value Nilai dari formulir.
+ * @return string
+ */
+function halo_tg2_core_sanitize_softnav($value) {
+	return '1' === (string) $value ? '1' : '0';
+}
+
+/**
+ * Teks pengantar seksi navigasi.
+ */
+function halo_tg2_core_nav_section_text() {
+	echo '<p>Perilaku perpindahan halaman di panel siswa dan halaman lesson.</p>';
+}
+
+/**
+ * Kolom saklar navigasi lembut (panel & lesson tanpa muat ulang,
+ * hanya konten yang bertukar). Matikan bila ada masalah tampilan —
+ * situs kembali ke perpindahan halaman biasa seketika.
+ */
+function halo_tg2_core_field_softnav() {
+	$on = '1' === (string) get_option('halo_tg2_core_softnav', '1');
+	echo '<label><input type="checkbox" name="halo_tg2_core_softnav" value="1"' . checked($on, true, false) . '> Aktifkan navigasi lembut + skeleton</label>';
+	echo '<p class="description">Berlaku untuk dashboard panel dan halaman lesson. Checkout, login, dan konten video/kuis bawaan Tutor selalu memakai muat penuh.</p>';
 }
 
 /**
