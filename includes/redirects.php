@@ -203,7 +203,7 @@ function halo_tg2_core_tutor_dashboard_redirect() {
 		'enrolled-courses' => 'kelas',
 		'active-courses'   => 'kelas',
 		'completed-courses' => 'kelas',
-		'wishlist'         => 'kelas',
+		'wishlist'         => 'wishlist',
 		'purchase-history' => 'pesanan',
 		'settings'         => 'pengaturan',
 		'quiz-attempts'    => 'statistik',

@@ -211,3 +211,29 @@ function halo_tg2_core_dashboard_assets() {
 		);
 	}
 }
+
+add_action('admin_post_halo_tg2_wishlist_remove', 'halo_tg2_core_wishlist_remove');
+/**
+ * Hapus satu kelas dari wishlist Tutor milik pengguna
+ * (baris usermeta '_tutor_course_wishlist' — mekanisme yang sama
+ * dengan penghapusan bawaan Tutor), lalu kembali ke halaman
+ * Wishlist panel.
+ */
+function halo_tg2_core_wishlist_remove() {
+	$back = home_url('/');
+	$ret  = isset($_POST['return_url']) ? esc_url_raw(wp_unslash($_POST['return_url'])) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+	if ('' !== $ret && false !== strpos($ret, home_url('/'))) {
+		$back = $ret;
+	}
+	if (!is_user_logged_in() || !isset($_POST['_htwnonce']) || !wp_verify_nonce(sanitize_key(wp_unslash($_POST['_htwnonce'])), 'halo_tg2_wishlist_remove')) {
+		wp_safe_redirect($back);
+		exit;
+	}
+	$course_id = isset($_POST['course_id']) ? absint(wp_unslash($_POST['course_id'])) : 0;
+	if ($course_id > 0) {
+		delete_user_meta(get_current_user_id(), '_tutor_course_wishlist', $course_id);
+		$back = add_query_arg('status', 'terhapus', $back);
+	}
+	wp_safe_redirect($back);
+	exit;
+}
