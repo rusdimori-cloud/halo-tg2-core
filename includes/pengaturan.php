@@ -115,3 +115,62 @@ function halo_tg2_core_change_password() {
 	wp_safe_redirect(halo_tg2_core_pengaturan_url(array('sandi' => 'berubah')));
 	exit;
 }
+
+add_action('admin_post_halo_tg2_save_photo', 'halo_tg2_core_save_photo');
+/**
+ * Unggah foto profil & sampul — berkas menjadi lampiran WordPress dan
+ * ID-nya disimpan di meta yang sama dengan Tutor 4.1.3
+ * (_tutor_profile_photo / _tutor_cover_photo), sehingga Tutor dan
+ * seluruh situs membacanya sebagai foto resmi pengguna.
+ */
+function halo_tg2_core_save_photo() {
+	if (!is_user_logged_in() || !isset($_POST['_htfnonce']) || !wp_verify_nonce(sanitize_key(wp_unslash($_POST['_htfnonce'])), 'halo_tg2_save_photo')) {
+		wp_safe_redirect(halo_tg2_core_pengaturan_url(array('foto' => 'gagal')));
+		exit;
+	}
+	require_once ABSPATH . 'wp-admin/includes/image.php';
+	require_once ABSPATH . 'wp-admin/includes/file.php';
+	require_once ABSPATH . 'wp-admin/includes/media.php';
+
+	$uid       = get_current_user_id();
+	$fields    = array(
+		'profile_photo' => '_tutor_profile_photo',
+		'cover_photo'   => '_tutor_cover_photo',
+	);
+	$attempted = 0;
+	$saved     = 0;
+	foreach ($fields as $field => $meta) {
+		if (isset($_FILES[$field]) && isset($_FILES[$field]['name']) && '' !== $_FILES[$field]['name']) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- diperiksa media_handle_upload.
+			$attempted++;
+			$attachment_id = media_handle_upload($field, 0);
+			if (!is_wp_error($attachment_id) && $attachment_id) {
+				update_user_meta($uid, $meta, (int) $attachment_id);
+				$saved++;
+			}
+		}
+	}
+	$status = ($attempted > 0 && $saved === $attempted) ? 'tersimpan' : 'gagal';
+	wp_safe_redirect(halo_tg2_core_pengaturan_url(array('foto' => $status)));
+	exit;
+}
+
+add_action('admin_post_halo_tg2_remove_photo', 'halo_tg2_core_remove_photo');
+/**
+ * Hapus foto profil atau sampul (meta dikosongkan; berkas lampiran
+ * dibiarkan di pustaka media agar tidak menghapus data secara permanen).
+ */
+function halo_tg2_core_remove_photo() {
+	if (!is_user_logged_in() || !isset($_POST['_htrnonce']) || !wp_verify_nonce(sanitize_key(wp_unslash($_POST['_htrnonce'])), 'halo_tg2_remove_photo')) {
+		wp_safe_redirect(halo_tg2_core_pengaturan_url(array('foto' => 'gagal')));
+		exit;
+	}
+	$jenis = isset($_POST['jenis']) ? sanitize_key(wp_unslash($_POST['jenis'])) : '';
+	$uid   = get_current_user_id();
+	if ('profil' === $jenis) {
+		delete_user_meta($uid, '_tutor_profile_photo');
+	} elseif ('sampul' === $jenis) {
+		delete_user_meta($uid, '_tutor_cover_photo');
+	}
+	wp_safe_redirect(halo_tg2_core_pengaturan_url(array('foto' => 'dihapus')));
+	exit;
+}
