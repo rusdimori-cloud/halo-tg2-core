@@ -226,9 +226,14 @@ function halo_tg2_core_save_preferences() {
 	if (!in_array($scale, array(60, 80, 100, 120, 140, 160, 180, 200), true)) {
 		$scale = 100;
 	}
+	// Tema terang/gelap TIDAK lagi diatur dari panel (tidak sinkron
+	// dengan Mode Gelap situs) — nilai tersimpan lama dipertahankan
+	// apa adanya agar perilaku Tutor di halaman lesson tidak berubah.
+	$ht_saved_prefs = get_user_meta(get_current_user_id(), 'tutor_user_preferences', true);
+	$ht_theme_keep  = (is_array($ht_saved_prefs) && isset($ht_saved_prefs['theme']) && in_array($ht_saved_prefs['theme'], array('light', 'dark', 'system'), true)) ? $ht_saved_prefs['theme'] : 'system';
 	$prefs = array(
 		'auto_play_next' => isset($_POST['auto_play_next']),
-		'theme'          => $pick('theme', array('light', 'dark', 'system'), 'system'),
+		'theme'          => $ht_theme_keep,
 		'vision'         => $pick('vision', array('normal', 'protanopia', 'deuteranopia', 'deuteranomaly'), 'normal'),
 		'contrast'       => isset($_POST['contrast']) ? 'high' : '',
 		'motion_effects' => $pick('motion_effects', array('auto', 'reduce', 'standard'), 'auto'),
