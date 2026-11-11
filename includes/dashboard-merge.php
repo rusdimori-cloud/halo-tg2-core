@@ -1,6 +1,6 @@
 <?php
 /**
- * Dashboard gabungan (Fase 6) — jantung rencana penggabungan.
+ * Dashboard gabungan (Fase 6), jantung rencana penggabungan.
  * Menambah dua tab Woo ke dashboard Tutor lewat filter resminya:
  *  - "Pesanan Saya"     : daftar order pengguna (wc_get_orders).
  *  - "Akun & Pembayaran": ringkasan akun + jalan ke endpoint Woo.
@@ -215,7 +215,7 @@ function halo_tg2_core_dashboard_assets() {
 add_action('admin_post_halo_tg2_wishlist_remove', 'halo_tg2_core_wishlist_remove');
 /**
  * Hapus satu kelas dari wishlist Tutor milik pengguna
- * (baris usermeta '_tutor_course_wishlist' — mekanisme yang sama
+ * (baris usermeta '_tutor_course_wishlist', mekanisme yang sama
  * dengan penghapusan bawaan Tutor), lalu kembali ke halaman
  * Wishlist panel.
  */

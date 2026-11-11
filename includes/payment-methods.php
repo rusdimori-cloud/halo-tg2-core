@@ -1,10 +1,10 @@
 <?php
 /**
- * Metode pembayaran tersimpan — pengelolaan langsung dari dashboard
+ * Metode pembayaran tersimpan: pengelolaan langsung dari dashboard
  * kustom (daftar, hapus, tambah) tanpa keluar dari panel.
  * Penambahan kartu memakai alur resmi WooCommerce: berkas endpoint
  * add-payment-method milik Woo dimuat di dalam panel, dan setelah
- * tersimpan Woo mengalihkan ke daftar metode — dialihkan balik ke
+ * tersimpan Woo mengalihkan ke daftar metode, dialihkan balik ke
  * panel oleh filter di bawah.
  *
  * @package HaloTG2Core
@@ -60,7 +60,7 @@ function halo_tg2_core_add_pm_panel_url($url) {
 add_action('template_redirect', 'halo_tg2_core_pm_return_redirect', 1);
 /**
  * Setelah metode pembayaran berhasil ditambah dari panel, Woo
- * mengalihkan ke /my-account/payment-methods/ — kembalikan ke panel.
+ * mengalihkan ke /my-account/payment-methods/, kembalikan ke panel.
  */
 function halo_tg2_core_pm_return_redirect() {
 	if (!function_exists('is_account_page') || !is_account_page()) {

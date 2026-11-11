@@ -1,12 +1,12 @@
 <?php
 /**
- * Profil publik Tutor — halo-tg2.com/profile/<username>/.
+ * Profil publik Tutor: halo-tg2.com/profile/<username>/.
  *
  * Tutor LMS hanya melayani halaman profil bila layout profil pada
  * opsinya bukan "private" (gerbang di templates/public-profile.php).
- * Rutin sekali-jalan ini (hook init — admin_init tidak menyala untuk
+ * Rutin sekali-jalan ini (hook init, admin_init tidak menyala untuk
  * tamu) menyetel layout siswa + instruktur ke "pp-circle" (nilai
- * persisnya bebas — tema mengganti seluruh tampilannya lewat
+ * persisnya bebas: tema mengganti seluruh tampilannya lewat
  * override tutor/public-profile.php), lalu menyegarkan aturan
  * rewrite sekali.
  *

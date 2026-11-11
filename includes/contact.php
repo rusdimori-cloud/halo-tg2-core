@@ -35,7 +35,7 @@ function halo_tg2_core_contact_handle() {
 	if ('' === $to) {
 		$to = (string) get_option('admin_email');
 	}
-	$subject = sprintf('[halo TG2] Hubungi Kami — %s', $kategori);
+	$subject = sprintf('[halo TG2] Hubungi Kami: %s', $kategori);
 	$body    = sprintf(
 		"Dari: %s (%s)\nAkun: %s\nKategori: %s\n\n%s",
 		$user->display_name,

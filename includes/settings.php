@@ -3,7 +3,7 @@
  * Pengaturan persisten halo-tg2-core + halaman pengaturannya.
  * Disimpan sebagai option WordPress (bukan theme_mod) agar tidak hilang
  * saat tema berganti (Bagian 8 dokumen arsitektur).
- * Halaman: Settings → Halo TG2 Core. Penampilan situs BUKAN di sini —
+ * Halaman: Settings → Halo TG2 Core. Penampilan situs BUKAN di sini
  * itu wilayah Customizer → Halo TG2 milik tema.
  *
  * @package HaloTG2Core
@@ -87,7 +87,7 @@ function halo_tg2_core_nav_section_text() {
 
 /**
  * Kolom saklar navigasi lembut (panel & lesson tanpa muat ulang,
- * hanya konten yang bertukar). Matikan bila ada masalah tampilan —
+ * hanya konten yang bertukar). Matikan bila ada masalah tampilan
  * situs kembali ke perpindahan halaman biasa seketika.
  */
 function halo_tg2_core_field_softnav() {
@@ -187,9 +187,9 @@ function halo_tg2_core_render_settings_page() {
 					<td><strong>Halaman Masuk (satu pintu)</strong></td>
 					<td>
 						<?php if ('' !== $auth_url) : ?>
-							Terdeteksi — <a href="<?php echo esc_url($auth_url); ?>"><?php echo esc_html($auth_url); ?></a>
+							Terdeteksi: <a href="<?php echo esc_url($auth_url); ?>"><?php echo esc_html($auth_url); ?></a>
 						<?php else : ?>
-							<strong>Belum terdeteksi.</strong> Buat halaman baru dan pilih template &ldquo;Halo TG2 — Login &amp; Daftar (Satu Pintu)&rdquo;, lalu terbitkan.
+							<strong>Belum terdeteksi.</strong> Buat halaman baru dan pilih template &ldquo;Halo TG2 · Login &amp; Daftar (Satu Pintu)&rdquo;, lalu terbitkan.
 						<?php endif; ?>
 					</td>
 				</tr>
@@ -198,9 +198,9 @@ function halo_tg2_core_render_settings_page() {
 					<td>
 						<?php $panel_url = halo_tg2_core_panel_url(); ?>
 						<?php if ('' !== $panel_url) : ?>
-							Terdeteksi — <a href="<?php echo esc_url($panel_url); ?>"><?php echo esc_html($panel_url); ?></a>
+							Terdeteksi: <a href="<?php echo esc_url($panel_url); ?>"><?php echo esc_html($panel_url); ?></a>
 						<?php else : ?>
-							<strong>Belum terdeteksi.</strong> Buat halaman baru dan pilih template &ldquo;Halo TG2 — Dashboard Kustom&rdquo;, lalu terbitkan.
+							<strong>Belum terdeteksi.</strong> Buat halaman baru dan pilih template &ldquo;Halo TG2 · Dashboard Kustom&rdquo;, lalu terbitkan.
 						<?php endif; ?>
 					</td>
 				</tr>

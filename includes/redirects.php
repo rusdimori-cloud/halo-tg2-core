@@ -1,8 +1,9 @@
 <?php
 /**
- * Satu pintu masuk (Fase 5) — semua pintu lama tiba di halaman yang sama:
+ * Satu pintu masuk (Fase 5), semua pintu lama tiba di halaman yang sama:
  *  - URL login/daftar/lupa sandi WordPress diarahkan ke halaman auth tema.
  *  - /my-account/ WooCommerce diarahkan ke dashboard gabungan (Tutor).
+ *  - /shop/ bawaan Woo diarahkan permanen ke arsip course (admin dikecualikan).
  *  - Setelah login, pengguna non-admin tiba di dashboard.
  *
  * @package HaloTG2Core
@@ -145,7 +146,7 @@ add_action('template_redirect', 'halo_tg2_core_myaccount_redirect');
 /**
  * /my-account/ Woo → dashboard gabungan (Bagian 7 dokumen arsitektur).
  * Endpoint di bawah akun (orders, downloads, edit-account, dst.) TIDAK
- * dialihkan dari sini — mereka dibuka dari tab dashboard pada Fase 6 dan
+ * dialihkan dari sini: mereka dibuka dari tab dashboard pada Fase 6 dan
  * harus tetap bisa dijangkau.
  */
 function halo_tg2_core_myaccount_redirect() {
@@ -213,3 +214,22 @@ function halo_tg2_core_tutor_dashboard_redirect() {
 	wp_safe_redirect($target);
 	exit;
 }
+
+add_action('template_redirect', 'halo_tg2_core_shop_redirect', 20);
+/**
+ * /shop/ bawaan Woo menampilkan produk mentah di luar bahasa desain situs;
+ * katalog resmi adalah arsip course. Alihkan permanen (301).
+ * Admin dikecualikan agar halaman aslinya tetap bisa diperiksa.
+ */
+function halo_tg2_core_shop_redirect() {
+	if (!function_exists('is_shop') || !is_shop() || current_user_can('manage_options')) {
+		return;
+	}
+	$target = get_post_type_archive_link('courses');
+	if (!$target) {
+		$target = home_url('/courses/');
+	}
+	wp_safe_redirect($target, 301);
+	exit;
+}
+

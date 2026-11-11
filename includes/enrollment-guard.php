@@ -5,7 +5,7 @@
  * hanya MEMERIKSA: bila order berbayar memuat produk yang tertaut ke
  * sebuah course tetapi pembelinya ternyata belum ter-enroll, guard
  * mencoba enroll lewat API Tutor dan mencatat hasilnya di catatan order
- * + error log — tidak pernah diam-diam menganggap beres.
+ * + error log: tidak pernah diam-diam menganggap beres.
  *
  * @package HaloTG2Core
  */
@@ -45,7 +45,7 @@ function halo_tg2_core_enrollment_guard($order_id, $old, $new) {
 		$course_ids = halo_tg2_core_courses_for_product($product_id);
 		foreach ($course_ids as $course_id) {
 			if (method_exists(tutor_utils(), 'is_enrolled') && tutor_utils()->is_enrolled($course_id, $user_id)) {
-				continue; // Jalur resmi bekerja — tidak ada yang perlu dijaga.
+				continue; // Jalur resmi bekerja: tidak ada yang perlu dijaga.
 			}
 			$done = false;
 			if (method_exists(tutor_utils(), 'do_enroll')) {
@@ -55,7 +55,7 @@ function halo_tg2_core_enrollment_guard($order_id, $old, $new) {
 			if ($done) {
 				$order->add_order_note(sprintf('halo-tg2-core: enrollment otomatis untuk course "%s" tidak ditemukan; guard berhasil meng-enroll pembeli.', $course_title));
 			} else {
-				$order->add_order_note(sprintf('halo-tg2-core: PERINGATAN — pembeli belum ter-enroll di course "%s" dan guard tidak berhasil meng-enroll. Periksa manual.', $course_title));
+				$order->add_order_note(sprintf('halo-tg2-core: PERINGATAN: pembeli belum ter-enroll di course "%s" dan guard tidak berhasil meng-enroll. Periksa manual.', $course_title));
 			}
 			error_log(sprintf('[halo-tg2-core] enrollment-guard order #%d course #%d user #%d hasil: %s', $order_id, $course_id, $user_id, $done ? 'enrolled' : 'GAGAL'));
 		}
