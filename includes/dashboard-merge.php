@@ -99,54 +99,31 @@ function halo_tg2_core_render_orders() {
 
 /**
  * Render isi tab Akun & Pembayaran (dipanggil template tema).
- * Berisi kepala akun, kartu jalan ke detail/alamat, dan pengelolaan
- * metode pembayaran tersimpan langsung di tempat (daftar, hapus,
- * tambah lewat alur resmi Woo yang disematkan).
+ * Berisi daftar metode pembayaran tersimpan dan penghapusannya,
+ * langsung di tempat. Kepala akun dan kartu jalan ke endpoint Woo
+ * (Detail Akun, Alamat Penagihan) dihapus atas perintah pemilik
+ * 2026-11-13: panel tidak boleh lagi mengirim siswa ke /my-account/,
+ * urusan detail akun ditangani halaman Pengaturan panel sendiri.
+ * Tombol tambah metode ikut dihapus: situs belum punya gateway kartu
+ * yang mendukung penyimpanan, dan alur tambahnya rusak sejak awal
+ * (nama berkas template Woo yang dicari salah) sehingga selalu jatuh
+ * ke teks cadangan bertautan /my-account/. Kartu tersimpan akan
+ * muncul sendiri setelah pembayaran memakai gateway pendukung.
  */
 function halo_tg2_core_render_account() {
 	if (!class_exists('WooCommerce') || !is_user_logged_in()) {
 		echo '<p>Fitur akun belum aktif.</p>';
 		return;
 	}
-	$user    = wp_get_current_user();
 	$user_id = get_current_user_id();
 	$panel   = halo_tg2_core_panel_url();
 	$self    = '' !== $panel
 		? add_query_arg('tampilan', 'akun', $panel)
-		: wc_get_account_endpoint_url('payment-methods');
+		: home_url('/');
 	$notice  = isset($_GET['bayar']) ? sanitize_key(wp_unslash($_GET['bayar'])) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
-	if (isset($_GET['tambah_bayar'])) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		echo '<p style="margin-bottom:14px"><a href="' . esc_url($self) . '">&larr; Kembali ke Akun &amp; Pembayaran</a></p>';
-		echo '<h3 style="font-size:17px;font-weight:600;margin-bottom:12px">Tambah Metode Pembayaran</h3>';
-		$file = WC()->plugin_path() . '/templates/myaccount/add-payment-method.php';
-		if (file_exists($file)) {
-			include $file;
-		} else {
-			echo '<p>Formulir penambahan tidak tersedia. Gunakan <a href="' . esc_url(wc_get_account_endpoint_url('add-payment-method')) . '">halaman pembayaran Woo</a>.</p>';
-		}
-		return;
-	}
 	?>
-	<div class="ht-core__account-head">
-		<div class="ht-core__avatar" aria-hidden="true"><?php echo esc_html(strtoupper(substr($user->display_name, 0, 1))); ?></div>
-		<div>
-			<p class="ht-core__account-name"><?php echo esc_html($user->display_name); ?></p>
-			<p class="ht-core__account-mail"><?php echo esc_html($user->user_email); ?></p>
-		</div>
-	</div>
-	<div class="ht-core__cards">
-		<a class="ht-core__card" href="<?php echo esc_url(wc_get_account_endpoint_url('edit-account')); ?>">
-			<span class="ht-core__card-title">Detail Akun</span>
-			<span class="ht-core__card-desc">Nama, email, dan kata sandi akunmu.</span>
-		</a>
-		<a class="ht-core__card" href="<?php echo esc_url(wc_get_account_endpoint_url('edit-address')); ?>">
-			<span class="ht-core__card-title">Alamat Penagihan</span>
-			<span class="ht-core__card-desc">Alamat yang dipakai pada tagihan pesanan.</span>
-		</a>
-	</div>
-
-	<h3 style="font-size:17px;font-weight:600;margin:24px 0 6px">Metode Pembayaran Tersimpan</h3>
+	<h3 style="font-size:17px;font-weight:600;margin:0 0 6px">Metode Pembayaran Tersimpan</h3>
 	<p style="font-size:13.6px;color:#5B6B8C;margin-bottom:12px">Kartu tersimpan muncul setelah pembayaran pertamamu memakai gateway yang mendukung penyimpanan kartu.</p>
 	<?php if ('terhapus' === $notice) : ?>
 		<p style="background:rgba(18,138,67,.09);border:1px solid rgba(18,138,67,.35);color:#128A43;border-radius:12px;padding:10px 14px;font-size:13.6px;margin-bottom:12px">Metode pembayaran sudah dihapus.</p>
@@ -187,9 +164,6 @@ function halo_tg2_core_render_account() {
 			<?php endforeach; ?>
 		</div>
 	<?php endif; ?>
-	<p style="margin-top:16px">
-		<a class="halo-tg2__btn halo-tg2__btn--primary" style="display:inline-flex;align-items:center;height:44px;padding:0 22px;border-radius:9999px;background:#0F0F0F;color:#fff;font-weight:500;font-size:14px" href="<?php echo esc_url(add_query_arg('tambah_bayar', '1', $self)); ?>">+ Tambah Metode Pembayaran</a>
-	</p>
 	<?php
 }
 
